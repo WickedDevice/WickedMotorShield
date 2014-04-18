@@ -1,4 +1,4 @@
-#include <WickedMotorShield.h>
+#include <WickedMotor.h>
 WickedMotor motors;
 
 void printCurrentSensing(void);

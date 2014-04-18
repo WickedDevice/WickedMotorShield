@@ -1,4 +1,4 @@
-/* Copyright (C) 2014 by Victor Aprea <victor.aprea@wickeddevice.com>
+/* Copyright (C) 201 by Victor Aprea <victor.aprea@wickeddevice.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -19,21 +19,11 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
-#ifndef _WICKED_MOTOR_H
-#define _WICKED_MOTOR_H
+#include "WickedStepper.h"
 
-#include <WickedMotorShield.h>
-#include <stdint.h>
+WickedStepper::WickedStepper(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)
+  :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
 
-class WickedMotor : public WickedMotorShield{
- private:
-   uint8_t get_motor_direction(uint8_t motor_number);  
- public:
-   WickedMotor(uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno
-   void setSpeed(uint8_t motor_number, uint8_t pwm_val);            // 0..255
-   void setDirection(uint8_t motor_number, uint8_t direction);      // DIR_CCW, DIR_CW
-   void setBrake(uint8_t motor_number, uint8_t brake_type);         // HARD, SOFT, OFF
-};
-
-#endif /* _WICKED_MOTOR_H */
+  
+}
 

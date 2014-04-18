@@ -21,35 +21,11 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "WickedMotor.h"
 
-#define SERIAL_CLOCK_PIN (2)
-#define SERIAL_LATCH_PIN (7)
+WickedMotor::WickedMotor(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)
+  :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
 
-#define OPERATION_CLEAR  (0)
-#define OPERATION_SET    (1)
-#define OPERATION_NONE   (2)
-
-WickedMotor::WickedMotor(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin){
-  first_shift_register = 0xff;
-  second_shift_register = 0xff;
-  SERIAL_DATA_PIN = serial_data_pin;
+  // nothing else to do specific to a DC motor
   
-  M1_PWM_PIN = m1_pwm_pin;
-  M6_PWM_PIN = m6_pwm_pin;
-  
-  // intialize pins
-  pinMode(SERIAL_CLOCK_PIN, OUTPUT);
-  pinMode(SERIAL_LATCH_PIN, OUTPUT);
-  pinMode(SERIAL_DATA_PIN, OUTPUT);  
-  
-  pinMode(RCIN1_PIN, INPUT);
-  pinMode(RCIN2_PIN, INPUT);
-  
-  for(uint8_t ii = 0; ii < 6; ii++){
-    old_dir[ii] = DIR_CW; // initial direction coming out of brake is clockwise
-  }
-  
-  // load the initial values so the motors are set to a brake state initially
-  load_shift_register();
 }
 
 // for motor_number use one of the symbols: M1, M2, M3, M4, M5, M6
@@ -198,65 +174,6 @@ void WickedMotor::setBrake(uint8_t motor_number, uint8_t brake_type){
   load_shift_register();  
 }
 
-void WickedMotor::load_shift_register(void){
-  digitalWrite(SERIAL_LATCH_PIN, LOW);  
-  shiftOut(SERIAL_DATA_PIN, SERIAL_CLOCK_PIN, LSBFIRST, second_shift_register);  
-  shiftOut(SERIAL_DATA_PIN, SERIAL_CLOCK_PIN, LSBFIRST, first_shift_register);  
-  digitalWrite(SERIAL_LATCH_PIN, HIGH);  
-}
-
-uint8_t WickedMotor::get_shift_register_value(uint8_t motor_number){
-  uint8_t temp = first_shift_register;
-  if(motor_number == M5 || motor_number == M6){
-    temp = second_shift_register;
-  }
-  
-  return temp;
-}
-
-void WickedMotor::set_shift_register_value(uint8_t motor_number, uint8_t value){
-  if(motor_number == M5 || motor_number == M6){
-    second_shift_register = value;
-  }
-  else{
-    first_shift_register = value;
-  }  
-}
-
-
-void WickedMotor::apply_mask(uint8_t * shift_register_value, uint8_t mask, uint8_t operation){
-  switch(operation){
-  case OPERATION_CLEAR:
-    *shift_register_value &= ~mask;
-    break;
-  case OPERATION_SET:
-    *shift_register_value |= mask;
-    break;
-  case OPERATION_NONE:
-    // do nothing
-    break;
-  }
-}
-
-uint16_t WickedMotor::currentSense(uint8_t motor_number){
-  switch(motor_number){
-  case M1:
-    return analogRead(A0);
-  case M2:
-    return analogRead(A2);
-  case M3:
-    return analogRead(A1);
-  case M4:
-    return analogRead(A3);
-  case M5:
-    return analogRead(A4);
-  case M6:
-    return analogRead(A5);
-  }    
-  
-  return 0xffff; // indicate error - bad motor_number argument
-}
-
 uint8_t WickedMotor::get_motor_direction(uint8_t motor_number){
   uint8_t shift_register_value = get_shift_register_value(motor_number);
   
@@ -279,38 +196,4 @@ uint8_t WickedMotor::get_motor_direction(uint8_t motor_number){
 
 }
 
-uint8_t WickedMotor::filter_mask(uint8_t shift_regsiter_value, uint8_t mask){
-  if((shift_regsiter_value & mask) == 0){
-    return 0;
-  }
-  
-  // else
-  return 1;
-}
 
-uint32_t WickedMotor::getRCIN(uint8_t rc_input_number, uint32_t timeout){
-  
-  uint8_t rc_input_pin = get_rc_input_pin(rc_input_number);
-  if(rc_input_pin == 0xff){
-    return 0xffffffff; //invalid RCIN number
-  }
-  
-  if(timeout == 0){
-    return pulseIn(rc_input_pin, HIGH);
-  }
-
-  //else
-  return pulseIn(rc_input_pin, HIGH, timeout);
-}
-
-uint8_t WickedMotor::get_rc_input_pin(uint8_t rc_input_number){
-  if(rc_input_number == RCIN1){
-    return RCIN1_PIN;
-  }
-  else if(rc_input_number == RCIN2){
-    return RCIN2_PIN;
-  }
-  
-  //else
-  return 0xff;
-}

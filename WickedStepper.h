@@ -19,21 +19,18 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
-#ifndef _WICKED_MOTOR_H
-#define _WICKED_MOTOR_H
+#ifndef _WICKED_STEPPER_H
+#define _WICKED_STEPPER_H
 
 #include <WickedMotorShield.h>
 #include <stdint.h>
 
-class WickedMotor : public WickedMotorShield{
+class WickedStepper : public WickedMotorShield{
  private:
-   uint8_t get_motor_direction(uint8_t motor_number);  
+   
  public:
-   WickedMotor(uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno
-   void setSpeed(uint8_t motor_number, uint8_t pwm_val);            // 0..255
-   void setDirection(uint8_t motor_number, uint8_t direction);      // DIR_CCW, DIR_CW
-   void setBrake(uint8_t motor_number, uint8_t brake_type);         // HARD, SOFT, OFF
+   WickedStepper(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin);
 };
 
-#endif /* _WICKED_MOTOR_H */
+#endif /* _WICKED_STEPPER_H */
 

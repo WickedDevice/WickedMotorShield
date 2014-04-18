@@ -17,7 +17,7 @@ void setup(void){
     Serial.print(m_headings[ii]);
     Serial.print(F("\t"));
   }
-  Serial.printnl();
+  Serial.println();
 }
 
 void loop(void){
