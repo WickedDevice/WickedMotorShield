@@ -27,9 +27,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 class WickedStepper : public WickedMotorShield{
  private:
-   
+    void stepMotor(int this_step);
+    
+    uint8_t direction;             // Direction of rotation
+    uint16_t speed;                // Speed in RPMs
+    uint32_t step_delay;           // delay between steps, in ms, based on speed
+    uint16_t number_of_steps;      // total number of steps this motor can take
+    uint8_t pin_count;             // whether you're driving the motor with 2 or 4 pins
+    uint16_t step_number;          // which step the motor is on
+    uint32_t last_step_time;       // time stamp in ms of when the last step was taken       
+    uint8_t m1;                    // the M-number of the first coil
+    uint8_t m2;                    // the M-number of the second coil
  public:
-   WickedStepper(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin);
+   WickedStepper(uint16_t number_of_steps, uint8_t m1, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin);   
+   WickedStepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin);      
+   void setSpeed(uint32_t speed);
+   void step(uint16_t number_of_steps);
+   
 };
 
 #endif /* _WICKED_STEPPER_H */

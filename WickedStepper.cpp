@@ -21,9 +21,125 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "WickedStepper.h"
 
-WickedStepper::WickedStepper(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)
+WickedStepper::WickedStepper(uint16_t number_of_steps, uint8_t m1, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)     
   :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
 
+  this->step_number = 0;                      // which step the motor is on
+  this->speed = 0;                            // the motor speed, in revolutions per minute
+  this->direction = 0;                        // motor direction
+  this->last_step_time = 0;                   // time stamp in ms of the last step taken
+  this->number_of_steps = number_of_steps;    // total number of steps for this motor
   
+  this->m1 = m1;
+  this->m2 = 0xff; // unused
+    
+  this->pin_count   = 2;                      // pin_count is used by the stepMotor() method:
 }
 
+WickedStepper::WickedStepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)    
+  :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
+
+  this->step_number = 0;                      // which step the motor is on
+  this->speed = 0;                            // the motor speed, in revolutions per minute
+  this->direction = 0;                        // motor direction
+  this->last_step_time = 0;                   // time stamp in ms of the last step taken
+  this->number_of_steps = number_of_steps;    // total number of steps for this motor
+  
+  this->m1 = m1;
+  this->m2 = m2;
+
+  // pin_count is used by the stepMotor() method:  
+  this->pin_count = 4;   
+}
+
+void WickedStepper::setSpeed(uint32_t speed){
+  this->step_delay = 60L * 1000L / this->number_of_steps / speed;
+}
+
+void WickedStepper::step(uint16_t number_of_steps){
+  int steps_left = abs(number_of_steps);  // how many steps to take
+  
+  // determine direction based on whether steps_to_mode is + or -:
+  if (number_of_steps > 0) {this->direction = 1;}
+  if (number_of_steps < 0) {this->direction = 0;}
+    
+    
+  // decrement the number of steps, moving one step each time:
+  while(steps_left > 0) {
+  // move only if the appropriate delay has passed:
+  if (millis() - this->last_step_time >= this->step_delay) {
+      // get the timeStamp of when you stepped:
+      this->last_step_time = millis();
+      // increment or decrement the step number,
+      // depending on direction:
+      if (this->direction == 1) {
+        this->step_number++;
+        if (this->step_number == this->number_of_steps) {
+          this->step_number = 0;
+        }
+      } 
+      else { 
+        if (this->step_number == 0) {
+          this->step_number = this->number_of_steps;
+        }
+        this->step_number--;
+      }
+      // decrement the steps left:
+      steps_left--;
+      // step the motor to step number 0, 1, 2, or 3:
+      stepMotor(this->step_number % 4);
+    }
+  }
+}
+
+//TODO: convert the code below into analogous shift register loads
+void WickedStepper::stepMotor(int this_step){
+  if (this->pin_count == 2) {
+    switch (this_step) {
+      case 0: /* 01 */
+      //digitalWrite(motor_pin_1, LOW);
+      //digitalWrite(motor_pin_2, HIGH);
+      break;
+      case 1: /* 11 */
+      //digitalWrite(motor_pin_1, HIGH);
+      //digitalWrite(motor_pin_2, HIGH);
+      break;
+      case 2: /* 10 */
+      //digitalWrite(motor_pin_1, HIGH);
+      //digitalWrite(motor_pin_2, LOW);
+      break;
+      case 3: /* 00 */
+      //digitalWrite(motor_pin_1, LOW);
+      //digitalWrite(motor_pin_2, LOW);
+      break;
+    } 
+  }
+  if (this->pin_count == 4) {
+    switch (this_step) {
+      case 0:    // 1010
+      //digitalWrite(motor_pin_1, HIGH);
+      //digitalWrite(motor_pin_2, LOW);
+      //digitalWrite(motor_pin_3, HIGH);
+      //digitalWrite(motor_pin_4, LOW);
+      break;
+      case 1:    // 0110
+      //digitalWrite(motor_pin_1, LOW);
+      //digitalWrite(motor_pin_2, HIGH);
+      //digitalWrite(motor_pin_3, HIGH);
+      //digitalWrite(motor_pin_4, LOW);
+      break;
+      case 2:    //0101
+      //digitalWrite(motor_pin_1, LOW);
+      //digitalWrite(motor_pin_2, HIGH);
+      //digitalWrite(motor_pin_3, LOW);
+      //digitalWrite(motor_pin_4, HIGH);
+      break;
+      case 3:    //1001
+      //digitalWrite(motor_pin_1, HIGH);
+      //digitalWrite(motor_pin_2, LOW);
+      //digitalWrite(motor_pin_3, LOW);
+      //digitalWrite(motor_pin_4, HIGH);
+      break;
+    } 
+  }
+}
