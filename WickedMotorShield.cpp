@@ -99,25 +99,6 @@ void WickedMotorShield::apply_mask(uint8_t * shift_register_value, uint8_t mask,
   }
 }
 
-uint16_t WickedMotorShield::currentSense(uint8_t motor_number){
-  switch(motor_number){
-  case M1:
-    return analogRead(A0);
-  case M2:
-    return analogRead(A2);
-  case M3:
-    return analogRead(A1);
-  case M4:
-    return analogRead(A3);
-  case M5:
-    return analogRead(A4);
-  case M6:
-    return analogRead(A5);
-  }    
-  
-  return 0xffff; // indicate error - bad motor_number argument
-}
-
 uint8_t WickedMotorShield::filter_mask(uint8_t shift_regsiter_value, uint8_t mask){
   if((shift_regsiter_value & mask) == 0){
     return 0;

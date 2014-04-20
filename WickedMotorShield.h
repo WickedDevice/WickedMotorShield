@@ -95,8 +95,7 @@ class WickedMotorShield{
    void set_shift_register_value(uint8_t motor_number, uint8_t value);       
    void load_shift_register(void);    
  public:
-   WickedMotorShield(uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno
-   uint16_t currentSense(uint8_t motor_number);                     // returns current ADC value associated with motor
+   WickedMotorShield(uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno                        // returns current ADC value associated with motor
    uint32_t getRCIN(uint8_t rc_input_number, uint32_t timeout = 0); // returns the result for pulseIn for the requested channel
 };
 

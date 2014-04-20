@@ -19,18 +19,16 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
-#include "WickedMotor.h"
+#include "Wicked_DCMotor.h"
 
-WickedMotor::WickedMotor(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)
+Wicked_DCMotor::Wicked_DCMotor(uint8_t motor_number, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)
   :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
 
-  // nothing else to do specific to a DC motor
-  
+  this->motor_number = motor_number;
 }
 
-// for motor_number use one of the symbols: M1, M2, M3, M4, M5, M6
 // for pwm value use a value between 0 and 255
-void WickedMotor::setSpeed(uint8_t motor_number, uint8_t pwm_val){  
+void Wicked_DCMotor::setSpeed(uint8_t pwm_val){  
   switch(motor_number){
   case M1:
     analogWrite(M1_PWM_PIN, pwm_val);
@@ -53,9 +51,8 @@ void WickedMotor::setSpeed(uint8_t motor_number, uint8_t pwm_val){
   }
 }
 
-// for motor_number use one of the symbols: M1, M2, M3, M4, M5, M6
 // for direction use one of the symbols: DIR_CW, DIR_CC
-void WickedMotor:: setDirection(uint8_t motor_number, uint8_t direction){
+void Wicked_DCMotor:: setDirection(uint8_t direction){
   uint8_t shift_register_value = get_shift_register_value(motor_number);
   uint8_t * p_shift_register_value = &shift_register_value;
   uint8_t dir_operation   = OPERATION_NONE;
@@ -100,9 +97,8 @@ void WickedMotor:: setDirection(uint8_t motor_number, uint8_t direction){
   load_shift_register();
 }
 
-// for motor_number use one of the symbols: M1, M2, M3, M4, M5, M6
 // for brake_type use one of the symbols: HARD, SOFT, OFF
-void WickedMotor::setBrake(uint8_t motor_number, uint8_t brake_type){
+void Wicked_DCMotor::setBrake(uint8_t brake_type){
   uint8_t shift_register_value = get_shift_register_value(motor_number);
   uint8_t * p_shift_register_value = &shift_register_value;
   uint8_t brake_operation = OPERATION_NONE;
@@ -140,7 +136,7 @@ void WickedMotor::setBrake(uint8_t motor_number, uint8_t brake_type){
   }
   else if((brake_type == BRAKE_SOFT) || (brake_type == BRAKE_HARD)){
     // when applying the brake, save the old_dir value   
-    old_dir[motor_number] = get_motor_direction(motor_number);
+    old_dir[motor_number] = get_motor_direction();
   }
   
   switch(motor_number){
@@ -174,7 +170,7 @@ void WickedMotor::setBrake(uint8_t motor_number, uint8_t brake_type){
   load_shift_register();  
 }
 
-uint8_t WickedMotor::get_motor_direction(uint8_t motor_number){
+uint8_t Wicked_DCMotor::get_motor_direction(void){
   uint8_t shift_register_value = get_shift_register_value(motor_number);
   
   switch(motor_number){
@@ -196,4 +192,22 @@ uint8_t WickedMotor::get_motor_direction(uint8_t motor_number){
 
 }
 
+uint16_t Wicked_DCMotor::currentSense(void){
+  switch(motor_number){
+  case M1:
+    return analogRead(A0);
+  case M2:
+    return analogRead(A2);
+  case M3:
+    return analogRead(A1);
+  case M4:
+    return analogRead(A3);
+  case M5:
+    return analogRead(A4);
+  case M6:
+    return analogRead(A5);
+  }    
+  
+  return 0xffff; // indicate error - bad motor_number argument
+}
 

@@ -1,10 +1,27 @@
-#include <WickedMotor.h>
-WickedMotor motors;
+#include <Wicked_DCMotor.h>
 
-#define NUM_MOTORS 4
 #define RING_BUFFER_DEPTH 16
-uint8_t  m[NUM_MOTORS] = {M1, M2, M3, M4};
-char *   m_headings[NUM_MOTORS] = {"M1", "M2", "M3", "M4"};
+#define NUM_MOTORS 4
+Wicked_DCMotor motor1(M1);
+Wicked_DCMotor motor2(M2);
+Wicked_DCMotor motor3(M3);
+Wicked_DCMotor motor4(M4);
+
+Wicked_DCMotor *m[] = {&motor1, &motor2, &motor3, &motor4};
+const char *   m_headings[] = {"M1", "M2", "M3", "M4"};
+
+/*
+#define NUM_MOTORS 6
+Wicked_DCMotor motor1(M1);
+Wicked_DCMotor motor2(M2);
+Wicked_DCMotor motor3(M3);
+Wicked_DCMotor motor4(M4);
+Wicked_DCMotor motor5(M5);
+Wicked_DCMotor motor6(M6);
+Wicked_DCMotor *m[] = {&motor1, &motor2, &motor3, &motor4, &motor5, &motor6};
+const char *   m_headings[] = {"M1", "M2", "M3", "M4", "M5", "M6"};
+*/
+
 uint16_t ring_buffers[NUM_MOTORS][RING_BUFFER_DEPTH];
 uint8_t  ring_buffer_index;
 
@@ -23,7 +40,7 @@ void setup(void){
 void loop(void){
   // store current samples on each motor
   for(int ii = 0; ii < NUM_MOTORS; ii++){
-    ring_buffers[ii][ring_buffer_index] = motors.currentSense(m[ii]);
+    ring_buffers[ii][ring_buffer_index] = m[ii]->currentSense();
   }
 
   // update and wrap the ring_buffer_index
