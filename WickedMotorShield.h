@@ -82,11 +82,10 @@ class WickedMotorShield{
    static uint8_t SERIAL_DATA_PIN;
    static uint8_t RCIN1_PIN;
    static uint8_t RCIN2_PIN;
-  
-   uint8_t get_rc_input_pin(uint8_t rc_input_number);
+   static uint8_t get_rc_input_pin(uint8_t rc_input_number);
  protected:
-   static uint8_t M1_PWM_PIN;   
-   static uint8_t M6_PWM_PIN; 
+   static uint8_t M1_PWM_PIN;
+   static uint8_t M6_PWM_PIN;
    static uint8_t old_dir[6];
 
    uint8_t get_shift_register_value(uint8_t motor_number);   
@@ -94,9 +93,15 @@ class WickedMotorShield{
    uint8_t filter_mask(uint8_t shift_regsiter_value, uint8_t mask);
    void set_shift_register_value(uint8_t motor_number, uint8_t value);       
    void load_shift_register(void);    
+   uint8_t get_motor_directionM(uint8_t motor_number);     
+    
+   void setSpeedM(uint8_t motor_number, uint8_t pwm_val);                // 0..255
+   void setDirectionData(uint8_t motor_number, uint8_t direction);      // DIR_CCW, DIR_CW
+   void setBrakeData(uint8_t motor_number, uint8_t brake_type);         // HARD, SOFT, OFF       
  public:
    WickedMotorShield(uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno                        // returns current ADC value associated with motor
-   uint32_t getRCIN(uint8_t rc_input_number, uint32_t timeout = 0); // returns the result for pulseIn for the requested channel
+   static uint32_t getRCIN(uint8_t rc_input_number, uint32_t timeout = 0); // returns the result for pulseIn for the requested channel
+   static uint8_t version(void);
 };
 
 #endif /* _WICKED_MOTOR_SHIELD_H */

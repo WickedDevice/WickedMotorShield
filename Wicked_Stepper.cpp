@@ -32,7 +32,14 @@ Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2,
   
   this->m1 = m1;
   this->m2 = m2;
-
+  
+  setSpeedM(m1, 255);
+  setSpeedM(m2, 255);
+  setDirectionData(m1, DIR_CW);
+  setDirectionData(m2, DIR_CW);
+  setBrakeData(m1, BRAKE_OFF);
+  setBrakeData(m2, BRAKE_OFF);
+  load_shift_register();
 }
 
 void Wicked_Stepper::setSpeed(uint32_t speed){
@@ -79,28 +86,23 @@ void Wicked_Stepper::step(uint16_t number_of_steps){
 void Wicked_Stepper::stepMotor(int this_step){
   switch (this_step) {
   case 0:    // 1010
-  //digitalWrite(motor_pin_1, HIGH);
-  //digitalWrite(motor_pin_2, LOW);
-  //digitalWrite(motor_pin_3, HIGH);
-  //digitalWrite(motor_pin_4, LOW);
-  break;
+    setDirectionData(m1, DIR_CW);
+    setDirectionData(m2, DIR_CCW);    
+    break;
   case 1:    // 0110
-  //digitalWrite(motor_pin_1, LOW);
-  //digitalWrite(motor_pin_2, HIGH);
-  //digitalWrite(motor_pin_3, HIGH);
-  //digitalWrite(motor_pin_4, LOW);
-  break;
-  case 2:    //0101
-  //digitalWrite(motor_pin_1, LOW);
-  //digitalWrite(motor_pin_2, HIGH);
-  //digitalWrite(motor_pin_3, LOW);
-  //digitalWrite(motor_pin_4, HIGH);
-  break;
-  case 3:    //1001
-  //digitalWrite(motor_pin_1, HIGH);
-  //digitalWrite(motor_pin_2, LOW);
-  //digitalWrite(motor_pin_3, LOW);
-  //digitalWrite(motor_pin_4, HIGH);
-  break;
+    setDirectionData(m1, DIR_CCW);
+    setDirectionData(m2, DIR_CCW);    
+    break;
+  case 2:    // 0101
+    setDirectionData(m1, DIR_CCW);
+    setDirectionData(m2, DIR_CW);    
+    break;
+  case 3:    // 1001
+    setDirectionData(m1, DIR_CW);
+    setDirectionData(m2, DIR_CW);    
+    break;
   }
+  
+  load_shift_register();
 }
+

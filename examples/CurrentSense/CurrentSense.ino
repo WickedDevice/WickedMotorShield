@@ -29,10 +29,15 @@ uint32_t ringBufferAverage(uint8_t index);
 
 void setup(void){
   Serial.begin(115200);
-  Serial.println(F("Wicked Motor Shield - Current Sensing"));
+  Serial.print(F("Wicked Motor Shield Library version "));
+  Serial.print(WickedMotorShield::version());
+  Serial.println(F("- Current Sensing"));
   for(int ii = 0; ii < NUM_MOTORS; ii++){
     Serial.print(m_headings[ii]);
     Serial.print(F("\t"));
+    m[ii]->setDirection(DIR_CW);
+    m[ii]->setSpeed(255);
+    m[ii]->setBrake(BRAKE_OFF);
   }
   Serial.println();
 }

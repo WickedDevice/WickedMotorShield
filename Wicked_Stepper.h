@@ -37,8 +37,9 @@ class Wicked_Stepper : public WickedMotorShield{
     uint32_t last_step_time;       // time stamp in ms of when the last step was taken       
     uint8_t m1;                    // the M-number of the first coil
     uint8_t m2;                    // the M-number of the second coil
+
  public:
-   Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin);      
+   Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8);      
    void setSpeed(uint32_t speed);
    void step(uint16_t number_of_steps);   
 };

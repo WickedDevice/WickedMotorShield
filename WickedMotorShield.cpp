@@ -28,8 +28,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #define OPERATION_SET    (1)
 #define OPERATION_NONE   (2)
 
-uint8_t WickedMotorShield::first_shift_register = 0;
-uint8_t WickedMotorShield::second_shift_register = 0;
+uint8_t WickedMotorShield::first_shift_register = 0xff;
+uint8_t WickedMotorShield::second_shift_register = 0xff;
 uint8_t WickedMotorShield::SERIAL_DATA_PIN = 0;
 uint8_t WickedMotorShield::RCIN1_PIN = 0;
 uint8_t WickedMotorShield::RCIN2_PIN = 0;
@@ -133,4 +133,169 @@ uint8_t WickedMotorShield::get_rc_input_pin(uint8_t rc_input_number){
   
   //else
   return 0xff;
+}
+
+// for pwm value use a value between 0 and 255
+void WickedMotorShield::setSpeedM(uint8_t motor_number, uint8_t pwm_val){  
+  switch(motor_number){
+  case M1:
+    analogWrite(M1_PWM_PIN, pwm_val);
+    break;
+  case M2:
+    analogWrite(M2_PWM_PIN, pwm_val);  
+    break;
+  case M3:
+    analogWrite(M3_PWM_PIN, pwm_val);  
+    break;
+  case M4:
+    analogWrite(M4_PWM_PIN, pwm_val);  
+    break;
+  case M5:
+    analogWrite(M5_PWM_PIN, pwm_val);  
+    break;
+  case M6:
+    analogWrite(M6_PWM_PIN, pwm_val);  
+    break;  
+  }
+}
+
+void WickedMotorShield::setDirectionData(uint8_t motor_number, uint8_t direction){
+  uint8_t shift_register_value = get_shift_register_value(motor_number);
+  uint8_t * p_shift_register_value = &shift_register_value;
+  uint8_t dir_operation   = OPERATION_NONE;
+  
+  if(motor_number >= 6){
+    return; // invalid motor_number, go no further
+  }  
+  
+  //TODO: is this the "correct" sense of DIR_CW / DIR_CCW
+  // this explicitly becomes the old direction value
+  if(direction == DIR_CW){
+    dir_operation = OPERATION_SET; 
+    old_dir[motor_number] = 1; 
+  }
+  else if(direction == DIR_CCW){
+    dir_operation = OPERATION_CLEAR;
+    old_dir[motor_number] = 0;    
+  }
+
+  switch(motor_number){
+  case M1:
+    apply_mask(p_shift_register_value, M1_DIR_MASK, dir_operation);
+    break;
+  case M2:
+    apply_mask(p_shift_register_value, M2_DIR_MASK, dir_operation);  
+    break;
+  case M3:
+    apply_mask(p_shift_register_value, M3_DIR_MASK, dir_operation);  
+    break;
+  case M4:
+    apply_mask(p_shift_register_value, M4_DIR_MASK, dir_operation);  
+    break;
+  case M5:
+    apply_mask(p_shift_register_value, M5_DIR_MASK, dir_operation);  
+    break;
+  case M6:
+    apply_mask(p_shift_register_value, M6_DIR_MASK, dir_operation);  
+    break;  
+  }   
+  
+  set_shift_register_value(motor_number, shift_register_value);  
+}
+
+void WickedMotorShield::setBrakeData(uint8_t motor_number, uint8_t brake_type){
+  uint8_t shift_register_value = get_shift_register_value(motor_number);
+  uint8_t * p_shift_register_value = &shift_register_value;
+  uint8_t brake_operation = OPERATION_NONE;
+  uint8_t dir_operation   = OPERATION_NONE;
+  
+  if(motor_number >= 6){
+    return; // invalid motor_number, go no further
+  }
+  
+  // calculate the affect on the relevant shift register bits  
+  if(brake_type == BRAKE_OFF){
+    brake_operation = OPERATION_CLEAR;
+    dir_operation = OPERATION_NONE;  
+  }
+  else if(brake_type == BRAKE_SOFT){
+    brake_operation = OPERATION_SET;
+    dir_operation = OPERATION_CLEAR;
+   
+  }
+  else if(brake_type == BRAKE_HARD){
+    brake_operation = OPERATION_SET;
+    dir_operation = OPERATION_SET;          
+  }
+    
+  // save / restore directionality
+  // we already know motor_number is a safe index into old_dir because we checked earlier
+  if(brake_type == BRAKE_OFF){
+    // when clearing the brake, restore the old_dir value
+    if(old_dir[motor_number] == 1){ 
+      dir_operation = OPERATION_SET;  
+    }
+    else{
+      dir_operation = OPERATION_CLEAR;  
+    }
+  }
+  else if((brake_type == BRAKE_SOFT) || (brake_type == BRAKE_HARD)){
+    // when applying the brake, save the old_dir value   
+    old_dir[motor_number] = get_motor_directionM(motor_number);
+  }
+  
+  switch(motor_number){
+  case M1:
+    apply_mask(p_shift_register_value, M1_BRAKE_MASK, brake_operation);
+    apply_mask(p_shift_register_value, M1_DIR_MASK, dir_operation);
+    break;
+  case M2:
+    apply_mask(p_shift_register_value, M2_BRAKE_MASK, brake_operation);
+    apply_mask(p_shift_register_value, M2_DIR_MASK, dir_operation);  
+    break;
+  case M3:
+    apply_mask(p_shift_register_value, M3_BRAKE_MASK, brake_operation);
+    apply_mask(p_shift_register_value, M3_DIR_MASK, dir_operation);  
+    break;
+  case M4:
+    apply_mask(p_shift_register_value, M4_BRAKE_MASK, brake_operation);
+    apply_mask(p_shift_register_value, M4_DIR_MASK, dir_operation);  
+    break;
+  case M5:
+    apply_mask(p_shift_register_value, M5_BRAKE_MASK, brake_operation);
+    apply_mask(p_shift_register_value, M5_DIR_MASK, dir_operation);  
+    break;
+  case M6:
+    apply_mask(p_shift_register_value, M6_BRAKE_MASK, brake_operation);
+    apply_mask(p_shift_register_value, M6_DIR_MASK, dir_operation);  
+    break;  
+  }  
+  
+  set_shift_register_value(motor_number, shift_register_value);  
+}
+
+uint8_t WickedMotorShield::get_motor_directionM(uint8_t motor_number){
+  uint8_t shift_register_value = get_shift_register_value(motor_number);
+  
+  switch(motor_number){
+  case M1:
+    return filter_mask(shift_register_value, M1_DIR_MASK);
+  case M2:
+    return filter_mask(shift_register_value, M2_DIR_MASK);
+  case M3:
+    return filter_mask(shift_register_value, M3_DIR_MASK);
+  case M4:
+    return filter_mask(shift_register_value, M4_DIR_MASK);
+  case M5:
+    return filter_mask(shift_register_value, M5_DIR_MASK);
+  case M6:
+    return filter_mask(shift_register_value, M6_DIR_MASK);
+  }    
+  
+  return 0xff; // indicate error - bad motor_number argument  
+
+}
+
+uint8_t WickedMotorShield::version(void){
+  return 1;
 }
