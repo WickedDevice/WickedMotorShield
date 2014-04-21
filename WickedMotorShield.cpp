@@ -1,4 +1,4 @@
-/* Copyright (C) 201 by Victor Aprea <victor.aprea@wickeddevice.com>
+/* Copyright (C) 2014 by Victor Aprea <victor.aprea@wickeddevice.com>
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
