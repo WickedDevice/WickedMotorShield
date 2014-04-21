@@ -30,10 +30,10 @@ class Wicked_DCMotor : public WickedMotorShield{
    uint8_t get_motor_direction(void);  
    uint8_t motor_number;
  public:
-   Wicked_DCMotor(uint8_t motor_number, uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno
+   Wicked_DCMotor(uint8_t motor_number, uint8_t use_alternate_pins = 0);
    void setSpeed(uint8_t pwm_val);            // 0..255
    void setDirection(uint8_t direction);      // DIR_CCW, DIR_CW
-   void setBrake(uint8_t brake_type);         // HARD, SOFT, OFF
+   void setBrake(uint8_t brake_type);         // BRAKE_HARD, BRAKE_SOFT, BRAKE_OFF
    uint16_t currentSense(void);
 };
 

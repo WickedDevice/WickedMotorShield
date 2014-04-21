@@ -39,7 +39,7 @@ class Wicked_Stepper : public WickedMotorShield{
     uint8_t m2;                    // the M-number of the second coil
 
  public:
-   Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8);      
+   Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t use_alternate_pins = 0);      
    void setSpeed(uint32_t speed);
    void step(uint16_t number_of_steps);   
 };

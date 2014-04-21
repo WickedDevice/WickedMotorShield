@@ -75,6 +75,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #define OPERATION_SET    (1)
 #define OPERATION_NONE   (2)
 
+#define USE_ALTERNATE_PINS (1)
+
 class WickedMotorShield{
  private:
    static uint8_t first_shift_register;
@@ -95,11 +97,11 @@ class WickedMotorShield{
    void load_shift_register(void);    
    uint8_t get_motor_directionM(uint8_t motor_number);     
     
-   void setSpeedM(uint8_t motor_number, uint8_t pwm_val);                // 0..255
+   void setSpeedM(uint8_t motor_number, uint8_t pwm_val);               // 0..255
    void setDirectionData(uint8_t motor_number, uint8_t direction);      // DIR_CCW, DIR_CW
-   void setBrakeData(uint8_t motor_number, uint8_t brake_type);         // HARD, SOFT, OFF       
+   void setBrakeData(uint8_t motor_number, uint8_t brake_type);         // BRAKE_HARD, BRAKE_SOFT, BRAKE_OFF       
  public:
-   WickedMotorShield(uint8_t serial_data_pin = 12, uint8_t m1_pwm_pin = 11, uint8_t m6_pwm_pin = 3, uint8_t rcin1_pin = 4, uint8_t rcin2_pin = 8); // defaults for arduino uno                        // returns current ADC value associated with motor
+   WickedMotorShield(uint8_t use_alternate_pins = 0); // defaults for arduino uno                        
    static uint32_t getRCIN(uint8_t rc_input_number, uint32_t timeout = 0); // returns the result for pulseIn for the requested channel
    static uint8_t version(void);
 };

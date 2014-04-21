@@ -21,8 +21,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "Wicked_Stepper.h"
 
-Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)    
-  :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
+Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t use_alternate_pins)    
+  :WickedMotorShield(use_alternate_pins){
 
   this->step_number = 0;                      // which step the motor is on
   this->speed = 0;                            // the motor speed, in revolutions per minute

@@ -21,8 +21,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "Wicked_DCMotor.h"
 
-Wicked_DCMotor::Wicked_DCMotor(uint8_t motor_number, uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin)
-  :WickedMotorShield(serial_data_pin, m1_pwm_pin, m6_pwm_pin, rcin1_pin, rcin2_pin){
+Wicked_DCMotor::Wicked_DCMotor(uint8_t motor_number, uint8_t use_alternate_pins)
+  :WickedMotorShield(use_alternate_pins){
 
   this->motor_number = motor_number;
 }

@@ -30,18 +30,23 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 uint8_t WickedMotorShield::first_shift_register = 0xff;
 uint8_t WickedMotorShield::second_shift_register = 0xff;
-uint8_t WickedMotorShield::SERIAL_DATA_PIN = 0;
-uint8_t WickedMotorShield::RCIN1_PIN = 0;
-uint8_t WickedMotorShield::RCIN2_PIN = 0;
-uint8_t WickedMotorShield::M1_PWM_PIN = 0;   
-uint8_t WickedMotorShield::M6_PWM_PIN = 0; 
+uint8_t WickedMotorShield::SERIAL_DATA_PIN = 12;
+uint8_t WickedMotorShield::RCIN1_PIN = 4;
+uint8_t WickedMotorShield::RCIN2_PIN = 8;
+uint8_t WickedMotorShield::M1_PWM_PIN = 11;   
+uint8_t WickedMotorShield::M6_PWM_PIN = 3; 
 uint8_t WickedMotorShield::old_dir[6] = {0,0,0,0,0,0};
 
 
-WickedMotorShield::WickedMotorShield(uint8_t serial_data_pin, uint8_t m1_pwm_pin, uint8_t m6_pwm_pin, uint8_t rcin1_pin, uint8_t rcin2_pin){
-  SERIAL_DATA_PIN = serial_data_pin;  
-  M1_PWM_PIN = m1_pwm_pin;
-  M6_PWM_PIN = m6_pwm_pin;
+WickedMotorShield::WickedMotorShield(uint8_t use_alternate_pins){
+  
+  if( use_alternate_pins == USE_ALTERNATE_PINS){
+    WickedMotorShield::SERIAL_DATA_PIN = 0;
+    WickedMotorShield::RCIN1_PIN = 3;
+    WickedMotorShield::RCIN2_PIN = 11;
+    WickedMotorShield::M1_PWM_PIN = 8;   
+    WickedMotorShield::M6_PWM_PIN = 4; 
+  }
   
   // intialize pins
   pinMode(SERIAL_CLOCK_PIN, OUTPUT);
