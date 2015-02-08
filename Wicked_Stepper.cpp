@@ -21,7 +21,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #include "Wicked_Stepper.h"
 
-Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t use_alternate_pins)    
+Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t use_alternate_pins)
   :WickedMotorShield(use_alternate_pins){
 
   this->step_number = 0;                      // which step the motor is on
@@ -29,10 +29,10 @@ Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2,
   this->direction = 0;                        // motor direction
   this->last_step_time = 0;                   // time stamp in ms of the last step taken
   this->number_of_steps = number_of_steps;    // total number of steps for this motor
-  
+
   this->m1 = m1;
   this->m2 = m2;
-  
+
   setSpeedM(m1, 255);
   setSpeedM(m2, 255);
   setDirectionData(m1, DIR_CW);
@@ -46,14 +46,14 @@ void Wicked_Stepper::setSpeed(uint32_t speed){
   this->step_delay = 60L * 1000L / this->number_of_steps / speed;
 }
 
-void Wicked_Stepper::step(uint16_t number_of_steps){
+void Wicked_Stepper::step(int16_t number_of_steps){
   int steps_left = abs(number_of_steps);  // how many steps to take
-  
+
   // determine direction based on whether steps_to_mode is + or -:
   if (number_of_steps > 0) {this->direction = 1;}
   if (number_of_steps < 0) {this->direction = 0;}
-    
-    
+
+
   // decrement the number of steps, moving one step each time:
   while(steps_left > 0) {
   // move only if the appropriate delay has passed:
@@ -67,8 +67,8 @@ void Wicked_Stepper::step(uint16_t number_of_steps){
         if (this->step_number == this->number_of_steps) {
           this->step_number = 0;
         }
-      } 
-      else { 
+      }
+      else {
         if (this->step_number == 0) {
           this->step_number = this->number_of_steps;
         }
@@ -87,22 +87,21 @@ void Wicked_Stepper::stepMotor(int this_step){
   switch (this_step) {
   case 0:    // 1010
     setDirectionData(m1, DIR_CW);
-    setDirectionData(m2, DIR_CCW);    
+    setDirectionData(m2, DIR_CCW);
     break;
   case 1:    // 0110
     setDirectionData(m1, DIR_CCW);
-    setDirectionData(m2, DIR_CCW);    
+    setDirectionData(m2, DIR_CCW);
     break;
   case 2:    // 0101
     setDirectionData(m1, DIR_CCW);
-    setDirectionData(m2, DIR_CW);    
+    setDirectionData(m2, DIR_CW);
     break;
   case 3:    // 1001
     setDirectionData(m1, DIR_CW);
-    setDirectionData(m2, DIR_CW);    
+    setDirectionData(m2, DIR_CW);
     break;
   }
-  
+
   load_shift_register();
 }
-
