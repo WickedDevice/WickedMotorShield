@@ -1,4 +1,4 @@
-#include <Wicked_DCMotor.h>
+#include <WickedMotorShield.h>
 
 #define RING_BUFFER_DEPTH 16
 #define NUM_MOTORS 4

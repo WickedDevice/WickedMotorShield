@@ -304,3 +304,136 @@ uint8_t WickedMotorShield::get_motor_directionM(uint8_t motor_number){
 uint8_t WickedMotorShield::version(void){
   return 1;
 }
+
+
+
+Wicked_Stepper::Wicked_Stepper(uint16_t number_of_steps, uint8_t m1, uint8_t m2, uint8_t use_alternate_pins)
+  :WickedMotorShield(use_alternate_pins){
+
+  this->step_number = 0;                      // which step the motor is on
+  this->speed = 0;                            // the motor speed, in revolutions per minute
+  this->direction = 0;                        // motor direction
+  this->last_step_time = 0;                   // time stamp in ms of the last step taken
+  this->number_of_steps = number_of_steps;    // total number of steps for this motor
+
+  this->m1 = m1;
+  this->m2 = m2;
+
+  setSpeedM(m1, 255);
+  setSpeedM(m2, 255);
+  setDirectionData(m1, DIR_CW);
+  setDirectionData(m2, DIR_CW);
+  setBrakeData(m1, BRAKE_OFF);
+  setBrakeData(m2, BRAKE_OFF);
+  load_shift_register();
+}
+
+void Wicked_Stepper::setSpeed(uint32_t speed){
+  this->step_delay = 60L * 1000L / this->number_of_steps / speed;
+}
+
+void Wicked_Stepper::step(int16_t number_of_steps){
+  int steps_left = abs(number_of_steps);  // how many steps to take
+
+  // determine direction based on whether steps_to_mode is + or -:
+  if (number_of_steps > 0) {this->direction = 1;}
+  if (number_of_steps < 0) {this->direction = 0;}
+
+
+  // decrement the number of steps, moving one step each time:
+  while(steps_left > 0) {
+  // move only if the appropriate delay has passed:
+  if (millis() - this->last_step_time >= this->step_delay) {
+      // get the timeStamp of when you stepped:
+      this->last_step_time = millis();
+      // increment or decrement the step number,
+      // depending on direction:
+      if (this->direction == 1) {
+        this->step_number++;
+        if (this->step_number == this->number_of_steps) {
+          this->step_number = 0;
+        }
+      }
+      else {
+        if (this->step_number == 0) {
+          this->step_number = this->number_of_steps;
+        }
+        this->step_number--;
+      }
+      // decrement the steps left:
+      steps_left--;
+      // step the motor to step number 0, 1, 2, or 3:
+      stepMotor(this->step_number % 4);
+    }
+  }
+}
+
+//TODO: convert the code below into analogous shift register loads
+void Wicked_Stepper::stepMotor(int this_step){
+  switch (this_step) {
+  case 0:    // 1010
+    setDirectionData(m1, DIR_CW);
+    setDirectionData(m2, DIR_CCW);
+    break;
+  case 1:    // 0110
+    setDirectionData(m1, DIR_CCW);
+    setDirectionData(m2, DIR_CCW);
+    break;
+  case 2:    // 0101
+    setDirectionData(m1, DIR_CCW);
+    setDirectionData(m2, DIR_CW);
+    break;
+  case 3:    // 1001
+    setDirectionData(m1, DIR_CW);
+    setDirectionData(m2, DIR_CW);
+    break;
+  }
+
+  load_shift_register();
+}
+
+
+Wicked_DCMotor::Wicked_DCMotor(uint8_t motor_number, uint8_t use_alternate_pins)
+  :WickedMotorShield(use_alternate_pins){
+
+  this->motor_number = motor_number;
+}
+
+// for direction use one of the symbols: DIR_CW, DIR_CC
+void Wicked_DCMotor:: setDirection(uint8_t direction){
+  setDirectionData(motor_number, direction);
+  load_shift_register();
+}
+
+// for brake_type use one of the symbols: HARD, SOFT, OFF
+void Wicked_DCMotor::setBrake(uint8_t brake_type){
+  setBrakeData(motor_number, brake_type);
+  load_shift_register();  
+}
+
+uint8_t Wicked_DCMotor::get_motor_direction(void){
+  return get_motor_directionM(motor_number);
+}
+
+uint16_t Wicked_DCMotor::currentSense(void){
+  switch(motor_number){
+  case M1:
+    return analogRead(A0);
+  case M2:
+    return analogRead(A2);
+  case M3:
+    return analogRead(A1);
+  case M4:
+    return analogRead(A3);
+  case M5:
+    return analogRead(A4);
+  case M6:
+    return analogRead(A5);
+  }    
+  
+  return 0xffff; // indicate error - bad motor_number argument
+}
+
+void Wicked_DCMotor::setSpeed(uint8_t pwm_val){
+  setSpeedM(motor_number, pwm_val);
+}

@@ -1,4 +1,4 @@
-#include <Wicked_DCMotor.h>
+#include <WickedMotorShield.h>
 
 void printCurrentSensing(void);
 
