@@ -65,7 +65,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #define M4_PWM_PIN (10)
 #define M5_PWM_PIN (6)
 
-#define RCIN1      (1) 
+#define RCIN1      (1)
 #define RCIN2      (2)
 
 #define SERIAL_CLOCK_PIN (2)
@@ -90,18 +90,18 @@ class WickedMotorShield{
    static uint8_t M6_PWM_PIN;
    static uint8_t old_dir[6];
 
-   uint8_t get_shift_register_value(uint8_t motor_number);   
+   uint8_t get_shift_register_value(uint8_t motor_number);
    void apply_mask(uint8_t * shift_register_value, uint8_t mask, uint8_t operation);
-   uint8_t filter_mask(uint8_t shift_regsiter_value, uint8_t mask);
-   void set_shift_register_value(uint8_t motor_number, uint8_t value);       
-   void load_shift_register(void);    
-   uint8_t get_motor_directionM(uint8_t motor_number);     
-    
+   uint8_t filter_mask(uint8_t shift_register_value, uint8_t mask);
+   void set_shift_register_value(uint8_t motor_number, uint8_t value);
+   void load_shift_register(void);
+   uint8_t get_motor_directionM(uint8_t motor_number);
+
    void setSpeedM(uint8_t motor_number, uint8_t pwm_val);               // 0..255
    void setDirectionData(uint8_t motor_number, uint8_t direction);      // DIR_CCW, DIR_CW
-   void setBrakeData(uint8_t motor_number, uint8_t brake_type);         // BRAKE_HARD, BRAKE_SOFT, BRAKE_OFF       
+   void setBrakeData(uint8_t motor_number, uint8_t brake_type);         // BRAKE_HARD, BRAKE_SOFT, BRAKE_OFF
  public:
-   WickedMotorShield(uint8_t use_alternate_pins = 0); // defaults for arduino uno                        
+   WickedMotorShield(uint8_t use_alternate_pins = 0); // defaults for arduino uno
    static uint32_t getRCIN(uint8_t rc_input_number, uint32_t timeout = 0); // returns the result for pulseIn for the requested channel
    static uint8_t version(void);
 };
@@ -128,7 +128,7 @@ class Wicked_Stepper : public WickedMotorShield{
 
 class Wicked_DCMotor : public WickedMotorShield {
  private:
-   uint8_t get_motor_direction(void);  
+   uint8_t get_motor_direction(void);
    uint8_t motor_number;
  public:
    Wicked_DCMotor(uint8_t motor_number, uint8_t use_alternate_pins = 0);
